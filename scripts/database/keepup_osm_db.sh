@@ -9,9 +9,6 @@ trap 'echo "$0: error on line $LINENO"' ERR
 here="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 . $here/../../conf/config
 
-# source : https://github.com/springmeyer/up-to-date/blob/master/how_to.txt
-# make sure osmososis/osm2pgsql are on your PATH
-# cron does not inherit from your env
 export PATH=/usr/bin/:$PATH
 
 echo
