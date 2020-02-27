@@ -28,7 +28,7 @@ DOCKER_NAME=magosm_db_$DOCKER_NAME_SUFFIX
 DOCKER_HOST_PORT_TO_PUBLISH=5433
 
 # HOST/DOCKER SHARED VOLUMES BASE DIR
-HOST_VOLUMES_BASE_DIR=${HOME}/docker_mounted_volumes/$DOCKER_NAME-docker-volumes # default base directory on your host machine where shared docker volumes must be localized
+HOST_VOLUMES_BASE_DIR=/home/admin/docker_mounted_volumes/$DOCKER_NAME-docker-volumes # default base directory on your host machine where shared docker volumes must be localized
 DOCKER_VOLUMES_BASE_DIR=/mounted_volumes
 
 # HOST/DOCKER SHARED VOLUMES
