@@ -1,5 +1,13 @@
 # magOSM database
 
+Source code used for [magOSM](https://github.com/Magellium/magOSM) database:
+
+* Osm2pgsql database daily updated with Osmosis
+* PostgreSQL materialized views for each magOSM thematic
+* PostgreSQL triggers/functions/tables to detect/analyse/store OSM data changes on Osm2pgsql updates
+
+A config file lets you choose your country, OSM data provider and so on.
+
 ## Get source code and adapt configuration
 
 * clone this repo (it will be mounted later as a `source` docker volume)
