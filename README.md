@@ -11,10 +11,10 @@ A config file lets you choose your country, OSM data provider and so on.
 ## Get source code and adapt configuration
 
 * clone this repo (it will be mounted later as a `source` docker volume)
-* go to database directory
+* go to root directory
 
 ```bash
-cd ./database
+cd ./magosm_db
 ```
 
 * create your config files from default ones
@@ -59,6 +59,7 @@ sudo docker run \
   --volume $HOST_VOLUMES_BASE_DIR/$OSM2PGSQL_FLATNODE_DIR:$DOCKER_VOLUMES_BASE_DIR/$OSM2PGSQL_FLATNODE_DIR \
   --volume $(pwd)/:$DOCKER_VOLUMES_BASE_DIR/$SOURCE_DIR \
   --publish $DOCKER_HOST_PORT_TO_PUBLISH:5432 \
+  --shm-size="256MB" \
   --name $DOCKER_NAME \
   $DOCKER_BUILD_TAG
 ```
@@ -70,7 +71,8 @@ sudo docker exec $DOCKER_NAME bash $DOCKER_VOLUMES_BASE_DIR/$SOURCE_DIR/conf/pos
 # check your pg_hba.conf is correct
 sudo cat $HOST_VOLUMES_BASE_DIR/$PG_DATA_DIR/pg_hba.conf
 # you must restart your container to restart postgres service (needed for parameters which require a restart to update, as `shared_buffers`)
-sudo docker restart $DOCKER_NAME
+sudo docker stop $DOCKER_NAME
+sudo docker start $DOCKER_NAME
 # you can check that your postgresql.conf file has been correctly edited
 sudo docker exec $DOCKER_NAME bash -c 'cat ${PGDATA}/postgresql.conf'
 ```
@@ -92,7 +94,7 @@ $DOCKER_VOLUMES_BASE_DIR/$OSM_PBF_FILES_DIR/$OSM_LATEST_PBF_FILE_NAME"
 # check it
 echo $CMD
 # run
-nohup sudo docker exec $DOCKER_NAME $CMD >> $HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_LOG_DIR/osm2pgsql-create.log 2>&1 &
+nohup sudo sh -c "docker exec $DOCKER_NAME $CMD >> $HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_LOG_DIR/osm2pgsql-create.log 2>&1" &
 # check log file
 tail -f -n 200 $HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_LOG_DIR/osm2pgsql-create.log
 ```
@@ -113,7 +115,7 @@ sudo docker exec $DOCKER_NAME bash $DOCKER_VOLUMES_BASE_DIR/$SOURCE_DIR/scripts/
 
 ### Init Osmosis working directory
 
-First check for a local state.txt file. 
+First check for a local state.txt file.
 If you don't have one, this script will give you
 some useful instructions at end.
 If you have one, this script will print it for you.
@@ -132,7 +134,7 @@ bash ./scripts/database/init_osmosis_working_dir.sh
 
 ```bash
 # osmosis/osm2pgsql update
-nohup sudo docker exec $DOCKER_NAME bash $DOCKER_VOLUMES_BASE_DIR/$SOURCE_DIR/scripts/database/keepup_osm_db.sh >> $HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_LOG_DIR/keepup_osm_db.log 2>&1 &
+nohup sudo sh -c "docker exec $DOCKER_NAME bash $DOCKER_VOLUMES_BASE_DIR/$SOURCE_DIR/scripts/database/keepup_osm_db.sh >> $HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_LOG_DIR/keepup_osm_db.log 2>&1" &
 # check log file
 tail -f -n 200 $HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_LOG_DIR/keepup_osm_db.log
 # then check that your state.txt is one day further
@@ -141,7 +143,7 @@ cat $HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_WORKING_DIR/updates/state.txt
 
 ```bash
 # views and changes table update
-nohup sudo docker exec $DOCKER_NAME bash $DOCKER_VOLUMES_BASE_DIR/$SOURCE_DIR/scripts/database/keepup_osm_views_and_changes.sh >> $HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_LOG_DIR/keepup_osm_views_and_changes.log 2>&1 &
+nohup sudo sh -c "docker exec $DOCKER_NAME bash $DOCKER_VOLUMES_BASE_DIR/$SOURCE_DIR/scripts/database/keepup_osm_views_and_changes.sh >> $HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_LOG_DIR/keepup_osm_views_and_changes.log 2>&1" &
 # check log file
 tail -f -n 200 $HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_LOG_DIR/keepup_osm_views_and_changes.log
 ```
@@ -151,8 +153,7 @@ tail -f -n 200 $HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_LOG_DIR/keepup_osm_view
 ```bash
 sudo bash -c "cat <<EOF > /etc/cron.d/keepup_docker-$DOCKER_NAME
 # osmosis/osm2pgsql update
-30 0 * * * root sudo docker exec $DOCKER_NAME bash $DOCKER_VOLUMES_BASE_DIR/$SOURCE_DIR/scripts/database/keepup_osm_db.sh > $HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_LOG_DIR/keepup_osm_db.log 2>&1
-0 6 * * * root sudo docker exec $DOCKER_NAME bash $DOCKER_VOLUMES_BASE_DIR/$SOURCE_DIR/scripts/database/keepup_osm_views_and_changes.sh > $HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_LOG_DIR/keepup_osm_views_and_changes.log 2>&1
+30 0 * * * root docker exec $DOCKER_NAME bash $DOCKER_VOLUMES_BASE_DIR/$SOURCE_DIR/scripts/database/keepup_osm_db.sh > $HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_LOG_DIR/keepup_osm_db.log 2>&1 && docker exec $DOCKER_NAME bash $DOCKER_VOLUMES_BASE_DIR/$SOURCE_DIR/scripts/database/keepup_osm_views_and_changes.sh > $HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_LOG_DIR/keepup_osm_views_and_changes.log 2>&1
 EOF"
 ```
 
