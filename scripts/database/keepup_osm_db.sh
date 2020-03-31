@@ -97,3 +97,23 @@ echo Remove $LOCK
 echo
 
 rm $LOCK
+
+echo
+echo ------------------------------------------------------
+echo Remove changes older than 30 days
+echo
+
+psql -U $DBPG_USER_MAGOSM_USERNAME -d $DBPG_DATABASE_NAME << EOF
+DELETE FROM changes_analysis_point WHERE timestamp < current_date - 30;
+DELETE FROM changes_analysis_line WHERE timestamp < current_date - 30;
+DELETE FROM changes_analysis_polygon WHERE timestamp < current_date - 30;
+EOF
+
+echo
+echo ------------------------------------------------------
+echo Add changes for this iteration
+echo
+
+psql -U $DBPG_USER_MAGOSM_USERNAME -d $DBPG_DATABASE_NAME << EOF
+SELECT changes_analysis(); 
+EOF
