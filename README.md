@@ -134,18 +134,18 @@ bash ./scripts/database/init_osmosis_working_dir.sh
 
 ```bash
 # osmosis/osm2pgsql update
-nohup sudo sh -c "docker exec $DOCKER_NAME bash $DOCKER_VOLUMES_BASE_DIR/$SOURCE_DIR/scripts/database/keepup_osm_db.sh >> $HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_LOG_DIR/keepup_osm_db.log 2>&1" &
+nohup sudo sh -c "docker exec $DOCKER_NAME bash $DOCKER_VOLUMES_BASE_DIR/$SOURCE_DIR/scripts/database/keepup_osm_db_and_changes.sh >> $HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_LOG_DIR/keepup_osm_db_and_changes.log 2>&1" &
 # check log file
-tail -f -n 200 $HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_LOG_DIR/keepup_osm_db.log
+tail -f -n 200 $HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_LOG_DIR/keepup_osm_db_and_changes.log
 # then check that your state.txt is one day further
 cat $HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_WORKING_DIR/updates/state.txt
 ```
 
 ```bash
 # views and changes table update
-nohup sudo sh -c "docker exec $DOCKER_NAME bash $DOCKER_VOLUMES_BASE_DIR/$SOURCE_DIR/scripts/database/keepup_osm_views_and_changes.sh >> $HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_LOG_DIR/keepup_osm_views_and_changes.log 2>&1" &
+nohup sudo sh -c "docker exec $DOCKER_NAME bash $DOCKER_VOLUMES_BASE_DIR/$SOURCE_DIR/scripts/database/keepup_osm_views.sh >> $HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_LOG_DIR/keepup_osm_views.log 2>&1" &
 # check log file
-tail -f -n 200 $HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_LOG_DIR/keepup_osm_views_and_changes.log
+tail -f -n 200 $HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_LOG_DIR/keepup_osm_views.log
 ```
 
 ### Deploy cron tasks on host to keep everything up-to-date
@@ -153,15 +153,15 @@ tail -f -n 200 $HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_LOG_DIR/keepup_osm_view
 ```bash
 sudo bash -c "cat <<EOF > /etc/cron.d/keepup_docker-$DOCKER_NAME
 # osmosis/osm2pgsql update
-30 0 * * * root docker exec $DOCKER_NAME bash $DOCKER_VOLUMES_BASE_DIR/$SOURCE_DIR/scripts/database/keepup_osm_db.sh > $HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_LOG_DIR/keepup_osm_db.log 2>&1 && docker exec $DOCKER_NAME bash $DOCKER_VOLUMES_BASE_DIR/$SOURCE_DIR/scripts/database/keepup_osm_views_and_changes.sh > $HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_LOG_DIR/keepup_osm_views_and_changes.log 2>&1
+30 0 * * * root docker exec $DOCKER_NAME bash $DOCKER_VOLUMES_BASE_DIR/$SOURCE_DIR/scripts/database/keepup_osm_db_and_changes.sh > $HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_LOG_DIR/keepup_osm_db_and_changes.log 2>&1 && docker exec $DOCKER_NAME bash $DOCKER_VOLUMES_BASE_DIR/$SOURCE_DIR/scripts/database/keepup_osm_views.sh > $HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_LOG_DIR/keepup_osm_views.log 2>&1
 EOF"
 ```
 
 ### Add logrotate files
 
 ```bash
-sudo bash -c "cat <<'EOF' > /etc/logrotate.d/keepup_osm_db_docker-$DOCKER_NAME
-$HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_LOG_DIR/keepup_osm_db.log {
+sudo bash -c "cat <<'EOF' > /etc/logrotate.d/keepup_osm_db_and_changes_docker-$DOCKER_NAME
+$HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_LOG_DIR/keepup_osm_db_and_changes.log {
   daily
   rotate 7
   missingok
@@ -170,8 +170,8 @@ $HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_LOG_DIR/keepup_osm_db.log {
   create 0644 root root
 }
 EOF"
-sudo bash -c "cat <<'EOF' > /etc/logrotate.d/keepup_osm_views_and_changes_docker-$DOCKER_NAME
-$HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_LOG_DIR/keepup_osm_views_and_changes.log {
+sudo bash -c "cat <<'EOF' > /etc/logrotate.d/keepup_osm_views_docker-$DOCKER_NAME
+$HOST_VOLUMES_BASE_DIR/$OSMOSIS_OSM2PGSQL_LOG_DIR/keepup_osm_views.log {
   daily
   rotate 7
   missingok
