@@ -13,7 +13,7 @@ CREATE MATERIALIZED VIEW communes_polygon AS
 		tags->'wikipedia' as "wikipedia",
 		tags->'source' AS "source",
 		tags->'note' AS "note",
-		tags->'population' AS "population",
+		population AS "population",
 		tags->'source:population' AS "source_population",
 		tags->'osm_version' AS "osm_version",
 		tags->'osm_timestamp' AS "osm_timestamp",
