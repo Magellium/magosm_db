@@ -47,6 +47,7 @@ CREATE MATERIALIZED VIEW hospitals_point AS
 		'node' AS "osm_type", 
 		tags->'osm_version' AS "osm_version",
 		tags->'osm_timestamp' AS "osm_timestamp",
+		tags->'healthcare:speciality' as "healthcare-speciality",
 		way AS "the_geom",
 		'' AS "osm_original_geom"
 
@@ -95,6 +96,7 @@ CREATE MATERIALIZED VIEW hospitals_point AS
 		'way' AS "osm_type", 
 		tags->'osm_version' AS "osm_version",
 		tags->'osm_timestamp' AS "osm_timestamp",
+		tags->'healthcare:speciality' as "healthcare-speciality",
 		ST_Centroid(way) AS "the_geom",
 		ST_AsEWKT(way) AS "osm_original_geom"
 	FROM planet_osm_polygon 

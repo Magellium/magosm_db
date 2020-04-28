@@ -42,6 +42,7 @@ CREATE OR REPLACE VIEW hospitals_polygon AS
 		tags->'osm_changeset' AS "osm_changeset",*/
 		tags->'osm_version' AS "osm_version",
 		tags->'osm_timestamp' AS "osm_timestamp",
+		tags->'healthcare:speciality' as "healthcare-speciality",
 		way AS "the_geom"
 	FROM planet_osm_polygon 
 	WHERE amenity='hospital';
