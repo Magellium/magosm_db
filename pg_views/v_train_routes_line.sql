@@ -1,5 +1,5 @@
 ----------------
---train_routes--
+--train_routes_line--
 ----------------
 
 DROP MATERIALIZED VIEW IF EXISTS train_routes_line;
