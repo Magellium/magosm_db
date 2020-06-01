@@ -92,7 +92,8 @@ VALUES
 ('Sous-répartiteurs cuivre',4,'telecom_copper_connection_point','SELECT \$3 NOT LIKE ''%line'' AND \$1 ? ''telecom'' AND \$1 -> ''telecom'' = ''connection_point'' AND \$1 ? ''telecom:medium'' AND \$1 -> ''telecom:medium'' = ''copper'''),
 ('Noeuds de raccordement',4,'telecom_exchange_point','SELECT \$3 NOT LIKE ''%line'' AND ((\$1 ? ''telecom'' AND \$1 -> ''telecom'' IN (''central_office'', ''exchange'')) OR (\$1 ? ''man_made'' AND \$1 -> ''man_made'' = ''telephone_office''))'),
 ('Points de mutualisation fibre',4,'telecom_fibre_connection_point','SELECT \$3 NOT LIKE ''%line'' AND \$1 ? ''telecom'' AND \$1 -> ''telecom'' = ''connection_point'' AND \$1 ? ''telecom:medium'' AND \$1 -> ''telecom:medium'' = ''fibre'''),
-('Itinéraires de tramway',2,'tram_ltr_routes_line','SELECT \$2<0 AND \$3 LIKE ''%line'' AND \$1 ? ''route'' AND \$1 -> ''route'' IN (''light_rail'',''tram'')');
+('Itinéraires de tramway',2,'tram_ltr_routes_line','SELECT \$2<0 AND \$3 LIKE ''%line'' AND \$1 ? ''route'' AND \$1 -> ''route'' IN (''light_rail'',''tram'')'),
+('Itinéraires de train',2,'train_routes_line','SELECT \$2<0 AND \$3 LIKE ''%line'' AND \$1 ? ''route'' AND \$1 -> ''route'' = ''train''');
 
 GRANT ALL ON TABLE dictionnary.thematics TO ${DBPG_USER_MAGOSM_USERNAME};
 
