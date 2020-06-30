@@ -19,7 +19,32 @@ CREATE INDEX IF NOT EXISTS route_index
   ON planet_osm_line
   USING btree
   (route COLLATE pg_catalog."default");
-  
+
+CREATE INDEX IF NOT EXISTS cycleway_index
+  ON planet_osm_line
+  USING btree
+  (route COLLATE pg_catalog."default");
+
+CREATE INDEX IF NOT EXISTS cycleway_left_index
+  ON planet_osm_line
+  USING btree
+  (route COLLATE pg_catalog."default");
+
+CREATE INDEX IF NOT EXISTS subway_index
+  ON planet_osm_line
+  USING btree
+  (route COLLATE pg_catalog."default");
+
+CREATE INDEX IF NOT EXISTS wall_index
+  ON planet_osm_line
+  USING btree
+  ("wall" COLLATE pg_catalog."default");
+
+CREATE INDEX IF NOT EXISTS proposed_line_index
+  ON planet_osm_line
+  USING btree
+  ("proposed" COLLATE pg_catalog."default");
+ 
 CREATE INDEX IF NOT EXISTS amenity_point_index
   ON planet_osm_point
   USING btree
@@ -35,12 +60,32 @@ CREATE INDEX IF NOT EXISTS shop_point_index
   USING BTREE
   (shop COLLATE pg_catalog."default");
 
+CREATE INDEX IF NOT EXISTS indoor_point_index
+  ON planet_osm_point
+  USING BTREE
+  (indoor COLLATE pg_catalog."default");
+
+CREATE INDEX IF NOT EXISTS industrial_point_index
+  ON planet_osm_point
+  USING BTREE
+  (industrial COLLATE pg_catalog."default");
+
+CREATE INDEX IF NOT EXISTS proposed_point_index
+  ON planet_osm_point
+  USING btree
+  ("proposed" COLLATE pg_catalog."default");
+
 CREATE INDEX IF NOT EXISTS shop_poly_index
   ON planet_osm_polygon
   USING BTREE
   (shop COLLATE pg_catalog."default");
 
 CREATE INDEX IF NOT EXISTS building_index
+  ON planet_osm_polygon
+  USING btree
+  (building COLLATE pg_catalog."default");
+
+CREATE INDEX IF NOT EXISTS building_part_index
   ON planet_osm_polygon
   USING btree
   (building COLLATE pg_catalog."default");
@@ -69,6 +114,21 @@ CREATE INDEX IF NOT EXISTS boundary_index
   ON planet_osm_polygon
   USING btree
   (boundary COLLATE pg_catalog."default");
+
+CREATE INDEX IF NOT EXISTS indoor_poly_index
+  ON planet_osm_polygon
+  USING BTREE
+  (indoor COLLATE pg_catalog."default");
+
+CREATE INDEX IF NOT EXISTS industrial_poly_index
+  ON planet_osm_polygon
+  USING BTREE
+  (industrial COLLATE pg_catalog."default");
+
+CREATE INDEX IF NOT EXISTS proposed_poly_index
+  ON planet_osm_polygon
+  USING btree
+  ("proposed" COLLATE pg_catalog."default");
 
 CREATE INDEX IF NOT EXISTS osm_id_index
   ON planet_osm_line
