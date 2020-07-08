@@ -94,6 +94,7 @@ VALUES
 ('Points de mutualisation fibre',4,'telecom_fibre_connection_point','SELECT \$3 NOT LIKE ''%line'' AND \$1 ? ''telecom'' AND \$1 -> ''telecom'' = ''connection_point'' AND \$1 ? ''telecom:medium'' AND \$1 -> ''telecom:medium'' = ''fibre'''),
 ('Itinéraires de tramway',2,'tram_ltr_routes_line','SELECT \$2<0 AND \$3 LIKE ''%line'' AND \$1 ? ''route'' AND \$1 -> ''route'' IN (''light_rail'',''tram'')'),
 ('Itinéraires de train',2,'train_routes_line','SELECT \$2<0 AND \$3 LIKE ''%line'' AND \$1 ? ''route'' AND \$1 -> ''route'' = ''train''');
+('Structures sociales',1,'social_amenity_point','SELECT \$3 NOT LIKE ''%line'' AND ((\$1 ? ''amenity'' AND \$1 -> ''amenity'' IN (''social_facility'', ''community_centre'', ''social_centre'')) OR (\$1 ? ''social_facility'') OR (\$1 ? ''community_centre'') OR (\$1 ? ''office'' AND \$1 -> ''office'' IN (''ngo'', ''association'', ''union'')))')
 
 GRANT ALL ON TABLE dictionnary.thematics TO ${DBPG_USER_MAGOSM_USERNAME};
 
