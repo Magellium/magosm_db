@@ -21,19 +21,20 @@ pg_useful_indexes_file=(ind_*)
 
 echo
 echo ------------------------------------------------------
+echo CREATE PLPGSQL FUNCTION
+echo
+
+pg_proc_files=(proc_*)
+/bin/bash $here/utils/execute_sql_files.sh -p $(pwd) -f "$(printf "%s "  "${pg_proc_files[@]}")"
+
+echo
+echo ------------------------------------------------------
 echo CREATE VIEWS
 echo
 
 pg_views_files=(v_*)
 /bin/bash $here/utils/execute_sql_files.sh -p $(pwd) -f "$(printf "%s "  "${pg_views_files[@]}")"
 
-echo
-echo ------------------------------------------------------
-echo CREATE PLPGSQL FUNCTION
-echo
-
-pg_proc_files=(proc_*)
-/bin/bash $here/utils/execute_sql_files.sh -p $(pwd) -f "$(printf "%s "  "${pg_proc_files[@]}")"
 
 
 #echo
