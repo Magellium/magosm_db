@@ -46,4 +46,4 @@ CREATE MATERIALIZED VIEW train_routes_line AS
 		st_union(way) AS "the_geom"
 	FROM planet_osm_line 
 	WHERE route='train'AND osm_id < 0-- élimine erreurs de tagging avec route=train sur un way
-	GROUP BY osm_id, route, tags, name, ref, operator;
+	GROUP BY osm_id, route, tags, name, ref, operator, service;
