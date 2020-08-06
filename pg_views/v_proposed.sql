@@ -1,8 +1,8 @@
 ----------------------------------------
-----propositions de constructions-------
+----propositions de proposeds-------
 ----------toutes géométries-------------
 ----------------------------------------
-DROP MATERIALIZED VIEW magosm.proposed;
+DROP MATERIALIZED VIEW IF EXISTS magosm.proposed;
 CREATE MATERIALIZED VIEW magosm.proposed
  AS
 -- quand osm_id n'est pas unique (relations) on créé des id uniques (magosm_id ici, qui est alors la clé primaire appelée sur GéoServer) avec:
@@ -12,20 +12,20 @@ CREATE MATERIALIZED VIEW magosm.proposed
  SELECT planet_osm_point.osm_id,
     planet_osm_point.tags -> 'proposed'::text AS proposed,
 --clés associées à *=proposed, logique "common life cycle"
-    planet_osm_point.landuse,
-    planet_osm_point.highway,
-    planet_osm_point.building,
-    planet_osm_point.railway,
+    NULL landuse,
+    NULL highway,
+    NULL building,
+    NULL railway,
     planet_osm_point.barrier,
     planet_osm_point.public_transport,
     planet_osm_point.office,
     planet_osm_point.access,
-    planet_osm_point.waterway,
+    NULL waterway,
     planet_osm_point.leisure,
     planet_osm_point.shop,
     planet_osm_point.amenity,
     planet_osm_point.aerialway,
-    planet_osm_point.route,
+    NULL route,
     planet_osm_point.place,
     planet_osm_point.tags -> 'industrial'::text AS industrial,
     planet_osm_point.tags -> 'wall'::text AS wall,
@@ -49,7 +49,7 @@ CREATE MATERIALIZED VIEW magosm.proposed
     planet_osm_point.tags -> 'survey:date'::text AS "survey-date",
     planet_osm_point.tags -> 'description'::text AS description,
     planet_osm_point.tags -> 'wheelchair'::text AS wheelchair,
---tags contextuels complémentaires associés à construction--
+--tags contextuels complémentaires associés à proposed--
     planet_osm_point.tags -> 'start_date'::text AS start_date,
     planet_osm_point.tags -> 'check_date'::text AS check_date,
     planet_osm_point.tags -> 'opening_date'::text AS opening_date,
@@ -158,25 +158,19 @@ CREATE MATERIALIZED VIEW magosm.proposed
     planet_osm_point.tags -> 'osm_timestamp'::text AS osm_timestamp,
 --gestion de la géométrie--
     planet_osm_point.way AS the_geom,
-    ''::text AS osm_original_geom,
+    NULL::text AS osm_original_geom,
     'node'::text AS osm_type,
     
         CASE  -- renvoie la clé (variable  proposed_key) quand la valeur est proposed 
         -- modèle basique KEY=proposed
-            WHEN planet_osm_point.landuse = 'proposed'::text THEN 'landuse'::text
-            WHEN planet_osm_point.highway = 'proposed'::text THEN 'highway'::text
-            WHEN planet_osm_point.building = 'proposed'::text THEN 'building'::text 
-            WHEN planet_osm_point.railway = 'proposed'::text THEN 'railway'::text
             WHEN planet_osm_point.barrier = 'proposed'::text THEN 'barrier'::text
             WHEN planet_osm_point.public_transport = 'proposed'::text THEN 'public_transport'::text
             WHEN planet_osm_point.office = 'proposed'::text THEN 'office'::text
             WHEN planet_osm_point.access = 'proposed'::text THEN 'access'::text
-            WHEN planet_osm_point.waterway = 'proposed'::text THEN 'waterway'::text
             WHEN planet_osm_point.leisure = 'proposed'::text THEN 'leisure'::text
             WHEN planet_osm_point.shop = 'proposed'::text THEN 'shop'::text
             WHEN planet_osm_point.amenity = 'proposed'::text THEN 'amenity'::text
             WHEN planet_osm_point.aerialway = 'proposed'::text THEN 'aerialway'::text
-            WHEN planet_osm_point.route = 'proposed'::text THEN 'route'::text
             WHEN planet_osm_point.place = 'proposed'::text THEN 'place'::text
         -- modèle proposed:KEY=* (prefix dans le hstore)
             ELSE (hstore_prefix_filter(planet_osm_point.tags,'proposed')).prefix_key 
@@ -192,20 +186,14 @@ CREATE MATERIALIZED VIEW magosm.proposed
 
    FROM planet_osm_point
   WHERE planet_osm_point.tags -> 'proposed'::text IS NOT NULL 
-        OR planet_osm_point.landuse = 'proposed'::text 
-        OR planet_osm_point.highway = 'proposed'::text 
-        OR planet_osm_point.building = 'proposed'::text 
-        OR planet_osm_point.railway = 'proposed'::text 
         OR planet_osm_point.barrier = 'proposed'::text 
         OR planet_osm_point.public_transport = 'proposed'::text 
         OR planet_osm_point.office = 'proposed'::text 
         OR planet_osm_point.access = 'proposed'::text 
-        OR planet_osm_point.waterway = 'proposed'::text 
         OR planet_osm_point.leisure = 'proposed'::text 
         OR planet_osm_point.shop = 'proposed'::text 
         OR planet_osm_point.amenity = 'proposed'::text 
         OR planet_osm_point.aerialway = 'proposed'::text 
-        OR planet_osm_point.route = 'proposed'::text 
         OR planet_osm_point.place = 'proposed'::text -- filtrage dans la logique "common life cycle"
         OR (hstore_prefix_filter(planet_osm_point.tags,'proposed')).prefix_key IS NOT NULL -- filtrage dans la logique "lifecycle prefix"
       
@@ -213,18 +201,18 @@ CREATE MATERIALIZED VIEW magosm.proposed
  SELECT planet_osm_line.osm_id,
     planet_osm_line.tags -> 'proposed'::text AS proposed,
 --clés associées à *=proposed, logique "common life cycle"
-    planet_osm_line.landuse,
+    NULL landuse,
     planet_osm_line.highway,
-    planet_osm_line.building,
+    NULL building,
     planet_osm_line.railway,
     planet_osm_line.barrier,
     planet_osm_line.public_transport,
-    planet_osm_line.office,
+    NULL office,
     planet_osm_line.access,
     planet_osm_line.waterway,
     planet_osm_line.leisure,
-    planet_osm_line.shop,
-    planet_osm_line.amenity,
+    NULL shop,
+    NULL amenity,
     planet_osm_line.aerialway,
     planet_osm_line.route,
     planet_osm_line.place,
@@ -359,22 +347,17 @@ CREATE MATERIALIZED VIEW magosm.proposed
     planet_osm_line.tags -> 'osm_timestamp'::text AS osm_timestamp,
  --gestion de la géométrie--
     planet_osm_line.way AS the_geom,
-    ''::text AS osm_original_geom,
+    NULL::text AS osm_original_geom,
     'way'::text AS osm_type,
         CASE  -- renvoie la clé (variable  proposed_key) quand la valeur est proposed 
         -- modèle basique KEY=proposed
-            WHEN planet_osm_line.landuse = 'proposed'::text THEN 'landuse'::text
             WHEN planet_osm_line.highway = 'proposed'::text THEN 'highway'::text
-            WHEN planet_osm_line.building = 'proposed'::text THEN 'building'::text
             WHEN planet_osm_line.railway = 'proposed'::text THEN 'railway'::text
             WHEN planet_osm_line.barrier = 'proposed'::text THEN 'barrier'::text
             WHEN planet_osm_line.public_transport = 'proposed'::text THEN 'public_transport'::text
-            WHEN planet_osm_line.office = 'proposed'::text THEN 'office'::text
             WHEN planet_osm_line.access = 'proposed'::text THEN 'access'::text
             WHEN planet_osm_line.waterway = 'proposed'::text THEN 'waterway'::text
             WHEN planet_osm_line.leisure = 'proposed'::text THEN 'leisure'::text
-            WHEN planet_osm_line.shop = 'proposed'::text THEN 'shop'::text
-            WHEN planet_osm_line.amenity = 'proposed'::text THEN 'amenity'::text
             WHEN planet_osm_line.aerialway = 'proposed'::text THEN 'aerialway'::text
             WHEN planet_osm_line.route = 'proposed'::text THEN 'route'::text
             WHEN planet_osm_line.place = 'proposed'::text THEN 'place'::text
@@ -390,18 +373,13 @@ CREATE MATERIALIZED VIEW magosm.proposed
         END AS  proposed_value
    FROM planet_osm_line
   WHERE planet_osm_line.tags -> 'proposed'::text IS NOT NULL 
-    OR planet_osm_line.landuse = 'proposed'::text 
     OR planet_osm_line.highway = 'proposed'::text 
-    OR planet_osm_line.building = 'proposed'::text 
     OR planet_osm_line.railway = 'proposed'::text 
     OR planet_osm_line.barrier = 'proposed'::text 
     OR planet_osm_line.public_transport = 'proposed'::text 
-    OR planet_osm_line.office = 'proposed'::text 
     OR planet_osm_line.access = 'proposed'::text 
     OR planet_osm_line.waterway = 'proposed'::text 
     OR planet_osm_line.leisure = 'proposed'::text 
-    OR planet_osm_line.shop = 'proposed'::text 
-    OR planet_osm_line.amenity = 'proposed'::text 
     OR planet_osm_line.aerialway = 'proposed'::text 
     OR planet_osm_line.route = 'proposed'::text 
     OR planet_osm_line.place = 'proposed'::text -- filtrage dans la logique "common life cycle"
@@ -411,9 +389,9 @@ SELECT planet_osm_polygon.osm_id,
     planet_osm_polygon.tags -> 'proposed'::text AS proposed,
 --clés associées à *=proposed, logique "common life cycle"
     planet_osm_polygon.landuse,
-    planet_osm_polygon.highway,
+    NULL highway,
     planet_osm_polygon.building,
-    planet_osm_polygon.railway,
+    NULL railway,
     planet_osm_polygon.barrier,
     planet_osm_polygon.public_transport,
     planet_osm_polygon.office,
@@ -423,7 +401,7 @@ SELECT planet_osm_polygon.osm_id,
     planet_osm_polygon.shop,
     planet_osm_polygon.amenity,
     planet_osm_polygon.aerialway,
-    planet_osm_polygon.route,
+    NULL route,
     planet_osm_polygon.place,
     planet_osm_polygon.tags -> 'industrial'::text AS industrial,
     planet_osm_polygon.tags -> 'wall'::text AS wall,
@@ -557,13 +535,11 @@ SELECT planet_osm_polygon.osm_id,
  --gestion de la géométrie--
     st_centroid(planet_osm_polygon.way) AS the_geom,
     st_asewkt(planet_osm_polygon.way) AS osm_original_geom,
-    'polygon'::text AS osm_type,
+    'way'::text AS osm_type,
         CASE  -- renvoie la clé (variable  proposed_key) quand la valeur est proposed 
         -- modèle basique KEY=proposed
             WHEN planet_osm_polygon.landuse = 'proposed'::text THEN 'landuse'::text
-            WHEN planet_osm_polygon.highway = 'proposed'::text THEN 'highway'::text
             WHEN planet_osm_polygon.building = 'proposed'::text THEN 'building'::text
-            WHEN planet_osm_polygon.railway = 'proposed'::text THEN 'railway'::text
             WHEN planet_osm_polygon.barrier = 'proposed'::text THEN 'barrier'::text
             WHEN planet_osm_polygon.public_transport = 'proposed'::text THEN 'public_transport'::text
             WHEN planet_osm_polygon.office = 'proposed'::text THEN 'office'::text
@@ -573,7 +549,6 @@ SELECT planet_osm_polygon.osm_id,
             WHEN planet_osm_polygon.shop = 'proposed'::text THEN 'shop'::text
             WHEN planet_osm_polygon.amenity = 'proposed'::text THEN 'amenity'::text
             WHEN planet_osm_polygon.aerialway = 'proposed'::text THEN 'aerialway'::text
-            WHEN planet_osm_polygon.route = 'proposed'::text THEN 'route'::text
             WHEN planet_osm_polygon.place = 'proposed'::text THEN 'place'::text
         -- modèle proposed:KEY=* (prefix dans le hstore)
             ELSE (hstore_prefix_filter(planet_osm_polygon.tags,'proposed')).prefix_key
@@ -588,9 +563,7 @@ SELECT planet_osm_polygon.osm_id,
    FROM planet_osm_polygon
   WHERE planet_osm_polygon.tags -> 'proposed'::text IS NOT NULL 
     OR planet_osm_polygon.landuse = 'proposed'::text 
-    OR planet_osm_polygon.highway = 'proposed'::text 
     OR planet_osm_polygon.building = 'proposed'::text 
-    OR planet_osm_polygon.railway = 'proposed'::text 
     OR planet_osm_polygon.barrier = 'proposed'::text 
     OR planet_osm_polygon.public_transport = 'proposed'::text 
     OR planet_osm_polygon.office = 'proposed'::text 
@@ -600,7 +573,6 @@ SELECT planet_osm_polygon.osm_id,
     OR planet_osm_polygon.shop = 'proposed'::text 
     OR planet_osm_polygon.amenity = 'proposed'::text 
     OR planet_osm_polygon.aerialway = 'proposed'::text 
-    OR planet_osm_polygon.route = 'proposed'::text 
     OR planet_osm_polygon.place = 'proposed'::text -- filtrage dans la logique "common life cycle"
     OR (hstore_prefix_filter(planet_osm_polygon.tags,'proposed')).prefix_key IS NOT NULL -- filtrage dans la logique "lifecycle prefix"
 --) AS unique_id |car SELECT row_number() demande d'être stocké dans une variable 	
