@@ -57,7 +57,9 @@ CREATE MATERIALIZED VIEW highways_line AS
 			OR highway = 'service'
 			OR highway = 'pedestrian'
 			OR highway = 'living_street'
-			OR highway = 'track'	
+			OR highway = 'track'
+			OR highway = 'footway'
+			OR highway = 'path'
 		);
 
 -------------------------------
