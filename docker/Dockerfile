@@ -1,4 +1,4 @@
-FROM postgres:12
+FROM postgres:14
 
 ###
 # Set WORKDIR
@@ -12,11 +12,11 @@ WORKDIR $INSTALLWORKDIR
 # Environment variables
 ###
 
-ENV POSTGIS_VERSION 2.5
-ENV OSM2PGSQL_VERSION 1.2.0
-ENV OSMOSIS_VERSION 0.47-4
-ENV OSMIUM_VERSION 2.15.4
-ENV OSMIUM_TOOL_VERSION 1.11.1
+ENV POSTGIS_VERSION 3
+ENV OSM2PGSQL_VERSION 1.7.0
+ENV OSMOSIS_VERSION 0.48.3-1
+ENV OSMIUM_VERSION 2.18.0
+ENV OSMIUM_TOOL_VERSION 1.14.0
 
 ###
 # Install dependencies
@@ -41,24 +41,25 @@ RUN \
     libboost-system-dev \
     libboost-filesystem-dev \
     libpq-dev \
-    lua5.2 liblua5.2-dev \
+    lua5.3 liblua5.3-dev \
     # osmium
     doxygen graphviz libgdal-dev \
     libboost-program-options-dev libgeos++-dev \
+    liblz4-dev \
     # then clean
     && rm -rf /var/lib/apt/lists/*
 
 
 ###
-# Install dependencies from buster-backports
+# Install dependencies from bullseye-backports
 ###
 
 RUN \
-    echo "deb http://deb.debian.org/debian buster-backports main contrib non-free" >> /etc/apt/sources.list.d/backports.list
+    echo "deb http://deb.debian.org/debian bullseye-backports main contrib non-free" >> /etc/apt/sources.list.d/backports.list
 
 RUN \
-    apt-get update && apt-get install -y --no-install-recommends -t buster-backports \
-    postgresql-pltcl-12 \
+    apt-get update && apt-get install -y --no-install-recommends -t bullseye-backports \
+    postgresql-pltcl-14 \
     # then clean
     && rm -rf /var/lib/apt/lists/*
 
@@ -85,7 +86,7 @@ RUN git clone https://github.com/mapbox/protozero && \
     mv libosmium-${OSMIUM_VERSION} libosmium
 
 RUN cd libosmium && mkdir build && cd build && \
-    cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF -DBUILD_TESTING=OFF -DINSTALL_PROTOZERO=ON .. && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF -DBUILD_TESTING=OFF .. && \
     make
 
 # osmium-tool

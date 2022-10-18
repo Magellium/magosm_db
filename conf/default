@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=1.0
+VERSION=1.1
 
 ########################
 # VARIABLES_YOU_MUST_SET
@@ -68,6 +68,7 @@ OSM2PGSQL_OPTS="\
 --extra-attributes \
 --hstore  \
 --multi-geometry \
---style $DOCKER_VOLUMES_BASE_DIR/$SOURCE_DIR/conf/magosm.style"
+--style $DOCKER_VOLUMES_BASE_DIR/$SOURCE_DIR/conf/magosm.style \
+--middle-schema $DBPG_SCHEMA_MAGOSM_NAME"
 # uncomment next line if you want to use --flat-nodes (only for huge extracts like planet or europe)
 # OSM2PGSQL_OPTS="$OSM2PGSQL_OPTS --flat-nodes $DOCKER_VOLUMES_BASE_DIR/$OSM2PGSQL_FLATNODE_DIR/nodes.cache"
